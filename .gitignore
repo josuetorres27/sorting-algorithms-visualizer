@@ -1,0 +1,16 @@
+# Binaries & Object Files
+bin/
+build/
+obj/
+*.o
+*.out
+*.exe
+*.dSYM/
+
+# IDE & OS Metadata
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+*.swp
+*.tmp
