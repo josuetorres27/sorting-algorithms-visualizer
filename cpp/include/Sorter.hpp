@@ -27,59 +27,81 @@ struct SortMetrics {
 
 class Sorter {
  private:
+  // Helper swap
   static inline void swapElements(int &a, int &b) {
     int temp = a;
     a = b;
     b = temp;
   }
 
- public:
-  static SortMetrics selectionSort(int *A, int n) {
-    SortMetrics metrics;
-    auto start = std::chrono::high_resolution_clock::now();
+  // Quick Sort Partition (Lomuto scheme)
+  static int partition(int *A, int p, int r, SortMetrics &metrics) {
+    int pivot = A[r];
+    int i = p - 1;
 
-    for (int i = 0; i < n - 1; ++i) {
-      int minIndex = i;
-      for (int j = i + 1; j < n; ++j) {
-        metrics.comparisons++;
-        if (A[j] < A[minIndex]) {
-          minIndex = j;
-        }
-      }
-      if (minIndex != i) {
-        swapElements(A[i], A[minIndex]);
+    for (int j = p; j < r; ++j) {
+      metrics.comparisons++;
+      if (A[j] <= pivot) {
+        ++i;
+        swapElements(A[i], A[j]);
         metrics.swaps++;
       }
     }
-
-    auto end = std::chrono::high_resolution_clock::now();
-    metrics.elapsedMicroseconds = std::chrono::duration<double, std::micro>(end - start).count();
-    return metrics;
+    swapElements(A[i + 1], A[r]);
+    metrics.swaps++;
+    return i + 1;
   }
 
-  static SortMetrics insertionSort(int *A, int n) {
-    SortMetrics metrics;
-    auto start = std::chrono::high_resolution_clock::now();
+  // Quick Sort Recursive
+  static void quickSortRec(int *A, int p, int r, SortMetrics &metrics) {
+    if (p < r) {
+      int q = partition(A, p, r, metrics);
+      quickSortRec(A, p, q - 1, metrics);
+      quickSortRec(A, q + 1, r, metrics);
+    }
+  }
 
-    for (int j = 1; j < n; ++j) {
-      int key = A[j];
-      int i = j - 1;
+  // Merge Sort Merge Subroutine
+  static void merge(int *A, int p, int q, int r, SortMetrics &metrics) {
+    int n1 = q - p + 1;
+    int n2 = r - q;
 
-      while (i >= 0) {
-        metrics.comparisons++;
-        if (A[i] > key) {
-          A[i + 1] = A[i];
-          metrics.swaps++;
-          --i;
-        } else {
-          break;
-        }
+    std::vector<int> L(n1);
+    std::vector<int> R(n2);
+
+    for (int i = 0; i < n1; ++i) L[i] = A[p + i];
+    for (int j = 0; j < n2; ++j) R[j] = A[q + 1 + j];
+
+    int i = 0, j = 0, k = p;
+    while (i < n1 && j < n2) {
+      metrics.comparisons++;
+      if (L[i] <= R[j]) {
+        A[k++] = L[i++];
+      } else {
+        A[k++] = R[j++];
       }
-      A[i + 1] = key;
+      metrics.swaps++;
     }
 
-    auto end = std::chrono::high_resolution_clock::now();
-    metrics.elapsedMicroseconds = std::chrono::duration<double, std::micro>(end - start).count();
-    return metrics;
+    while (i < n1) {
+      A[k++] = L[i++];
+      metrics.swaps++;
+    }
+    while (j < n2) {
+      A[k++] = R[j++];
+      metrics.swaps++;
+    }
   }
+
+  // Merge Sort Recursive
+  static void mergeSortRec(int *A, int p, int r, SortMetrics &metrics) {
+    if (p < r) {
+      int q = p + (r - p) / 2;
+      mergeSortRec(A, p, q, metrics);
+      mergeSortRec(A, q + 1, r, metrics);
+      merge(A, p, q, r, metrics);
+    }
+  }
+
+
 };
