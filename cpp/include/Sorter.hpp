@@ -103,5 +103,193 @@ class Sorter {
     }
   }
 
+  // Heap Sort - Max-Heapify
+  static void maxHeapify(int *A, int heapSize, int i, SortMetrics &metrics) {
+    int left = 2 * i + 1;
+    int right = 2 * i + 2;
+    int largest = i;
 
+    if (left < heapSize) {
+      metrics.comparisons++;
+      if (A[left] > A[largest]) largest = left;
+    }
+
+    if (right < heapSize) {
+      metrics.comparisons++;
+      if (A[right] > A[largest]) largest = right;
+    }
+
+    if (largest != i) {
+      swapElements(A[i], A[largest]);
+      metrics.swaps++;
+      maxHeapify(A, heapSize, largest, metrics);
+    }
+  }
+
+ public:
+  Sorter() = default;
+
+  /**
+   * Selection Sort - O(n^2) Best, Average, Worst
+   */
+  static SortMetrics selectionSort(int *A, int n) {
+    SortMetrics metrics;
+    auto start = std::chrono::high_resolution_clock::now();
+
+    if (A != nullptr && n > 1) {
+      for (int i = 0; i < n - 1; ++i) {
+        int minIdx = i;
+        for (int j = i + 1; j < n; ++j) {
+          metrics.comparisons++;
+          if (A[j] < A[minIdx]) {
+            minIdx = j;
+          }
+        }
+        if (minIdx != i) {
+          swapElements(A[i], A[minIdx]);
+          metrics.swaps++;
+        }
+      }
+    }
+
+    auto end = std::chrono::high_resolution_clock::now();
+    metrics.elapsedMicroseconds = std::chrono::duration<double, std::micro>(end - start).count();
+    return metrics;
+  }
+
+  /**
+   * Insertion Sort - O(n) Best, O(n^2) Worst
+   */
+  static SortMetrics insertionSort(int *A, int n) {
+    SortMetrics metrics;
+    auto start = std::chrono::high_resolution_clock::now();
+
+    if (A != nullptr && n > 1) {
+      for (int i = 1; i < n; ++i) {
+        int key = A[i];
+        int j = i - 1;
+
+        while (j >= 0) {
+          metrics.comparisons++;
+          if (A[j] > key) {
+            A[j + 1] = A[j];
+            metrics.swaps++;
+            --j;
+          } else {
+            break;
+          }
+        }
+        A[j + 1] = key;
+      }
+    }
+
+    auto end = std::chrono::high_resolution_clock::now();
+    metrics.elapsedMicroseconds = std::chrono::duration<double, std::micro>(end - start).count();
+    return metrics;
+  }
+
+  /**
+   * Merge Sort - O(n log n) Best, Average, Worst (Stable)
+   */
+  static SortMetrics mergeSort(int *A, int n) {
+    SortMetrics metrics;
+    auto start = std::chrono::high_resolution_clock::now();
+
+    if (A != nullptr && n > 1) {
+      mergeSortRec(A, 0, n - 1, metrics);
+    }
+
+    auto end = std::chrono::high_resolution_clock::now();
+    metrics.elapsedMicroseconds = std::chrono::duration<double, std::micro>(end - start).count();
+    return metrics;
+  }
+
+  /**
+   * Heap Sort - O(n log n) Best, Average, Worst (In-place)
+   */
+  static SortMetrics heapSort(int *A, int n) {
+    SortMetrics metrics;
+    auto start = std::chrono::high_resolution_clock::now();
+
+    if (A != nullptr && n > 1) {
+      // Build max heap
+      for (int i = (n / 2) - 1; i >= 0; --i) {
+        maxHeapify(A, n, i, metrics);
+      }
+
+      // Extract elements
+      for (int i = n - 1; i >= 1; --i) {
+        swapElements(A[0], A[i]);
+        metrics.swaps++;
+        maxHeapify(A, i, 0, metrics);
+      }
+    }
+
+    auto end = std::chrono::high_resolution_clock::now();
+    metrics.elapsedMicroseconds = std::chrono::duration<double, std::micro>(end - start).count();
+    return metrics;
+  }
+
+  /**
+   * Quick Sort - O(n log n) Average, O(n^2) Worst
+   */
+  static SortMetrics quickSort(int *A, int n) {
+    SortMetrics metrics;
+    auto start = std::chrono::high_resolution_clock::now();
+
+    if (A != nullptr && n > 1) {
+      quickSortRec(A, 0, n - 1, metrics);
+    }
+
+    auto end = std::chrono::high_resolution_clock::now();
+    metrics.elapsedMicroseconds = std::chrono::duration<double, std::micro>(end - start).count();
+    return metrics;
+  }
+
+  /**
+   * Radix Sort (LSD) - Non-comparative O(d * (n + k))
+   */
+  static SortMetrics radixSort(int *A, int n) {
+    SortMetrics metrics;
+    auto start = std::chrono::high_resolution_clock::now();
+
+    if (A != nullptr && n > 1) {
+      // Find max element
+      int maxVal = A[0];
+      for (int i = 1; i < n; ++i) {
+        metrics.comparisons++;
+        if (A[i] > maxVal) maxVal = A[i];
+      }
+
+      std::vector<int> output(n);
+
+      for (int exp = 1; maxVal / exp > 0; exp *= 10) {
+        int count[10] = {0};
+
+        for (int i = 0; i < n; ++i) {
+          count[(A[i] / exp) % 10]++;
+        }
+
+        for (int i = 1; i < 10; ++i) {
+          count[i] += count[i - 1];
+        }
+
+        for (int i = n - 1; i >= 0; --i) {
+          int digit = (A[i] / exp) % 10;
+          output[count[digit] - 1] = A[i];
+          count[digit]--;
+          metrics.swaps++;
+        }
+
+        for (int i = 0; i < n; ++i) {
+          A[i] = output[i];
+        }
+      }
+    }
+
+    auto end = std::chrono::high_resolution_clock::now();
+    metrics.elapsedMicroseconds = std::chrono::duration<double, std::micro>(end - start).count();
+    return metrics;
+  }
+};
 };
