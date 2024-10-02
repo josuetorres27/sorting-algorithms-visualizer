@@ -292,4 +292,3 @@ class Sorter {
     return metrics;
   }
 };
-};
