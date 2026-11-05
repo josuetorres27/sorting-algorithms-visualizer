@@ -1,0 +1,1165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="dark">
+  <title>Sorting Algorithms & Complexity Visualizer</title>
+  <style>
+    :root {
+      --bg: #0b0f19;
+      --card-bg: #121929;
+      --card-header: #192338;
+      --border: #223250;
+      --text: #f1f5f9;
+      --text-muted: #94a3b8;
+      --primary: #38bdf8;
+      --primary-glow: rgba(56, 189, 248, 0.35);
+      --accent: #a855f7;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --bar-default: #38bdf8;
+      --bar-compare: #f59e0b;
+      --bar-swap: #ef4444;
+      --bar-sorted: #10b981;
+      --bar-pivot: #a855f7;
+      --font-sans: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      --font-mono: ui-monospace, 'Cascadia Code', 'Fira Code', Menlo, Consolas, monospace;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: var(--font-sans);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+    }
+
+    /* Header */
+    header {
+      background: var(--card-bg);
+      border-bottom: 1px solid var(--border);
+      padding: 0.9rem 1.5rem;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .logo-badge {
+      background: linear-gradient(135deg, #38bdf8, #a855f7);
+      color: #0b0f19;
+      font-weight: 900;
+      font-family: var(--font-mono);
+      padding: 0.35rem 0.65rem;
+      border-radius: 6px;
+      font-size: 0.9rem;
+      letter-spacing: 0.05em;
+    }
+
+    .brand h1 {
+      font-size: 1.15rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+
+    .brand p {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    /* Global Nav Tabs */
+    .nav-tabs {
+      display: flex;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 3px;
+      gap: 2px;
+    }
+
+    .tab-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      padding: 0.45rem 0.9rem;
+      font-size: 0.82rem;
+      font-weight: 600;
+      border-radius: 4px;
+      cursor: pointer;
+      font-family: inherit;
+      transition: all 0.15s ease;
+    }
+
+    .tab-btn.active {
+      background: var(--card-header);
+      color: var(--primary);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.4);
+    }
+
+    /* Controls Bar */
+    .controls-panel {
+      background: var(--card-bg);
+      border-bottom: 1px solid var(--border);
+      padding: 0.85rem 1.5rem;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .control-group {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+    }
+
+    .control-label {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .btn {
+      background: var(--card-header);
+      color: var(--text);
+      border: 1px solid var(--border);
+      padding: 0.45rem 0.85rem;
+      font-size: 0.82rem;
+      font-weight: 600;
+      border-radius: 6px;
+      cursor: pointer;
+      font-family: inherit;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      transition: all 0.15s ease;
+    }
+
+    .btn:hover:not(:disabled) {
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    .btn:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: #0b0f19;
+      border-color: var(--primary);
+    }
+
+    .btn-primary:hover:not(:disabled) {
+      background: #7dd3fc;
+      color: #0b0f19;
+      box-shadow: 0 0 12px var(--primary-glow);
+    }
+
+    .select-ctrl {
+      background: var(--bg);
+      color: var(--text);
+      border: 1px solid var(--border);
+      padding: 0.45rem 0.75rem;
+      font-size: 0.82rem;
+      font-family: inherit;
+      border-radius: 6px;
+      cursor: pointer;
+      outline: none;
+    }
+
+    .select-ctrl:focus {
+      border-color: var(--primary);
+    }
+
+    .range-wrap {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .range-input {
+      accent-color: var(--primary);
+      cursor: pointer;
+    }
+
+    /* Main Container */
+    main {
+      flex: 1;
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+      max-width: 1400px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    /* Section Views */
+    .view-section {
+      display: none;
+    }
+
+    .view-section.active {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    /* Visualizer Cards & Canvas */
+    .arena-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+    }
+
+    .arena-grid.dual-mode {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    @media (max-width: 960px) {
+      .arena-grid.dual-mode {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .arena-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+    }
+
+    .arena-header {
+      background: var(--card-header);
+      padding: 0.75rem 1rem;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .arena-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .arena-metrics {
+      display: flex;
+      gap: 0.75rem;
+      font-size: 0.75rem;
+      font-family: var(--font-mono);
+    }
+
+    .metric-badge {
+      background: var(--bg);
+      padding: 0.25rem 0.5rem;
+      border-radius: 4px;
+      border: 1px solid var(--border);
+    }
+
+    .canvas-container {
+      height: 380px;
+      padding: 1rem 0.5rem 0.5rem 0.5rem;
+      display: flex;
+      align-items: flex-end;
+      gap: 2px;
+      background: var(--bg);
+      position: relative;
+    }
+
+    .bar {
+      flex: 1;
+      background: var(--bar-default);
+      border-radius: 2px 2px 0 0;
+      transition: height 0.05s ease, background-color 0.1s ease;
+      min-width: 2px;
+    }
+
+    .bar.comparing {
+      background: var(--bar-compare) !important;
+      box-shadow: 0 0 8px rgba(245, 158, 11, 0.6);
+    }
+
+    .bar.swapping {
+      background: var(--bar-swap) !important;
+      box-shadow: 0 0 10px rgba(239, 68, 68, 0.7);
+    }
+
+    .bar.sorted {
+      background: var(--bar-sorted) !important;
+    }
+
+    .bar.pivot {
+      background: var(--bar-pivot) !important;
+      box-shadow: 0 0 10px rgba(168, 85, 247, 0.7);
+    }
+
+    /* Complexity Matrix Table */
+    .table-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+    }
+
+    .table-header {
+      background: var(--card-header);
+      padding: 1rem 1.25rem;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .calc-input-wrap {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    .calc-input {
+      background: var(--bg);
+      color: var(--primary);
+      border: 1px solid var(--border);
+      padding: 0.4rem 0.65rem;
+      font-size: 0.9rem;
+      font-family: var(--font-mono);
+      font-weight: 700;
+      border-radius: 6px;
+      width: 140px;
+      outline: none;
+    }
+
+    .calc-input:focus {
+      border-color: var(--primary);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+      text-align: left;
+    }
+
+    th {
+      background: var(--card-header);
+      padding: 0.75rem 1rem;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      border-bottom: 1px solid var(--border);
+    }
+
+    td {
+      padding: 0.85rem 1rem;
+      border-bottom: 1px solid var(--border);
+      font-family: var(--font-mono);
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    tr:hover td {
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .badge-complexity {
+      display: inline-block;
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+      font-weight: 700;
+      font-size: 0.78rem;
+    }
+
+    .comp-best { background: rgba(16, 185, 129, 0.15); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.3); }
+    .comp-avg  { background: rgba(56, 189, 248, 0.15); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.3); }
+    .comp-bad  { background: rgba(239, 68, 68, 0.15); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.3); }
+
+    /* Legend */
+    .legend {
+      display: flex;
+      gap: 1rem;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      flex-wrap: wrap;
+      padding: 0.5rem 1rem;
+      background: var(--card-bg);
+      border-radius: 6px;
+      border: 1px solid var(--border);
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .legend-color {
+      width: 12px;
+      height: 12px;
+      border-radius: 3px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header>
+    <div class="brand">
+      <div class="logo-badge">SORT // LAB</div>
+      <div>
+        <h1>Sorting Algorithms & Complexity Visualizer</h1>
+        <p>Interactive Comparison, Benchmark & Theoretical Complexity Analyzer</p>
+      </div>
+    </div>
+
+    <!-- Navigation View Tabs -->
+    <div class="nav-tabs">
+      <button class="tab-btn active" data-tab="visualizer">Visualizer Arena</button>
+      <button class="tab-btn" data-tab="calculator">Complexity Calculator</button>
+    </div>
+  </header>
+
+  <!-- Controls Panel -->
+  <div class="controls-panel">
+    <div class="control-group">
+      <!-- Mode Toggle -->
+      <span class="control-label">View:</span>
+      <select id="modeSelect" class="select-ctrl">
+        <option value="solo">Solo Visualizer</option>
+        <option value="dual" selected>Dual Race (Side-by-Side)</option>
+      </select>
+
+      <!-- Distribution / Dataset Case -->
+      <span class="control-label">Array:</span>
+      <select id="datasetSelect" class="select-ctrl" title="Select Input Distribution">
+        <option value="random">🎲 Random (Average Case)</option>
+        <option value="reversed">📉 Reversed (Worst Case)</option>
+        <option value="sorted">📈 Sorted (Best Case)</option>
+        <option value="duplicates">🔁 Few Unique (Duplicates)</option>
+      </select>
+
+      <!-- Array Size -->
+      <div class="range-wrap">
+        <span class="control-label">N:</span>
+        <input type="range" id="sizeRange" class="range-input" min="15" max="80" value="40">
+        <span id="sizeVal" style="font-size: 0.8rem; font-family: var(--font-mono); width: 24px;">40</span>
+      </div>
+
+      <!-- Animation Speed -->
+      <div class="range-wrap">
+        <span class="control-label">Speed:</span>
+        <input type="range" id="speedRange" class="range-input" min="1" max="100" value="65">
+      </div>
+    </div>
+
+    <div class="control-group">
+      <!-- Audio Toggle -->
+      <button id="audioBtn" class="btn" title="Toggle Sound Feedback">
+        🔊 Sound: OFF
+      </button>
+
+      <!-- Play / Pause / Reset -->
+      <button id="resetBtn" class="btn">↺ Reset</button>
+      <button id="playBtn" class="btn btn-primary">▶ Run Sort</button>
+    </div>
+  </div>
+
+  <main>
+    <!-- VIEW 1: VISUALIZER ARENA -->
+    <section id="visualizerView" class="view-section active">
+      <div class="legend">
+        <div class="legend-item"><span class="legend-color" style="background: var(--bar-default);"></span> Unsorted</div>
+        <div class="legend-item"><span class="legend-color" style="background: var(--bar-compare);"></span> Comparing</div>
+        <div class="legend-item"><span class="legend-color" style="background: var(--bar-swap);"></span> Swap / Overwrite</div>
+        <div class="legend-item"><span class="legend-color" style="background: var(--bar-pivot);"></span> Pivot / Minimum</div>
+        <div class="legend-item"><span class="legend-color" style="background: var(--bar-sorted);"></span> In Position</div>
+      </div>
+
+      <div class="arena-grid dual-mode" id="arenaGrid">
+        <!-- Arena 1 -->
+        <div class="arena-card" id="cardA">
+          <div class="arena-header">
+            <div class="arena-title">
+              <span>Lane 1:</span>
+              <select id="algoSelectA" class="select-ctrl">
+                <option value="quickSort" selected>Quick Sort (Lomuto)</option>
+                <option value="mergeSort">Merge Sort</option>
+                <option value="heapSort">Heap Sort</option>
+                <option value="insertionSort">Insertion Sort</option>
+                <option value="selectionSort">Selection Sort</option>
+                <option value="bubbleSort">Bubble Sort</option>
+              </select>
+            </div>
+            <div class="arena-metrics">
+              <span class="metric-badge">Cmp: <strong id="cmpA" style="color: var(--primary);">0</strong></span>
+              <span class="metric-badge">Swaps: <strong id="swapA" style="color: var(--warning);">0</strong></span>
+            </div>
+          </div>
+          <div class="canvas-container" id="canvasA"></div>
+        </div>
+
+        <!-- Arena 2 (Compare Lane) -->
+        <div class="arena-card" id="cardB">
+          <div class="arena-header">
+            <div class="arena-title">
+              <span>Lane 2:</span>
+              <select id="algoSelectB" class="select-ctrl">
+                <option value="mergeSort" selected>Merge Sort</option>
+                <option value="quickSort">Quick Sort (Lomuto)</option>
+                <option value="heapSort">Heap Sort</option>
+                <option value="insertionSort">Insertion Sort</option>
+                <option value="selectionSort">Selection Sort</option>
+                <option value="bubbleSort">Bubble Sort</option>
+              </select>
+            </div>
+            <div class="arena-metrics">
+              <span class="metric-badge">Cmp: <strong id="cmpB" style="color: var(--primary);">0</strong></span>
+              <span class="metric-badge">Swaps: <strong id="swapB" style="color: var(--warning);">0</strong></span>
+            </div>
+          </div>
+          <div class="canvas-container" id="canvasB"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- VIEW 2: COMPLEXITY CALCULATOR -->
+    <section id="calculatorView" class="view-section">
+      <div class="table-card">
+        <div class="table-header">
+          <div>
+            <h2 style="font-size: 1.1rem; font-weight: 700;">Theoretical Complexity Calculator</h2>
+            <p style="font-size: 0.78rem; color: var(--text-muted);">Enter an input size (N) to project exact theoretical operations and resource growth.</p>
+          </div>
+
+          <div class="calc-input-wrap">
+            <label for="nInput" class="control-label">Target N:</label>
+            <input type="number" id="nInput" class="calc-input" value="1000" min="2" max="10000000">
+            <button id="btnPreset10k" class="btn" style="padding: 0.35rem 0.6rem; font-size: 0.75rem;">N=10k</button>
+            <button id="btnPreset100k" class="btn" style="padding: 0.35rem 0.6rem; font-size: 0.75rem;">N=100k</button>
+          </div>
+        </div>
+
+        <table>
+          <thead>
+            <tr>
+              <th>Algorithm</th>
+              <th>Best Case</th>
+              <th>Average Case</th>
+              <th>Worst Case</th>
+              <th>Worst Case Ops (N=<span class="current-n">1000</span>)</th>
+              <th>Space</th>
+              <th>Stable?</th>
+            </tr>
+          </thead>
+          <tbody id="complexityTableBody">
+            <!-- Dynamically populated via JS -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    // Audio Synthesizer via Web Audio API
+    let audioCtx = null;
+    let soundEnabled = false;
+
+    function playNote(val, maxVal = 100) {
+      if (!soundEnabled) return;
+      try {
+        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'sine';
+        // Frequency range 180Hz to 900Hz
+        const freq = 180 + (val / maxVal) * 720;
+        osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+
+        gain.gain.setValueAtTime(0.03, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.04);
+
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.04);
+      } catch (e) {}
+    }
+
+    // App State
+    let isRunning = false;
+    let baseData = [];
+    let laneAState = { array: [], steps: [], cmp: 0, swap: 0, done: false };
+    let laneBState = { array: [], steps: [], cmp: 0, swap: 0, done: false };
+    let animationTimer = null;
+
+    // DOM Elements
+    const canvasA = document.getElementById('canvasA');
+    const canvasB = document.getElementById('canvasB');
+    const cardB = document.getElementById('cardB');
+    const arenaGrid = document.getElementById('arenaGrid');
+    const modeSelect = document.getElementById('modeSelect');
+    const datasetSelect = document.getElementById('datasetSelect');
+    const sizeRange = document.getElementById('sizeRange');
+    const sizeVal = document.getElementById('sizeVal');
+    const speedRange = document.getElementById('speedRange');
+    const playBtn = document.getElementById('playBtn');
+    const resetBtn = document.getElementById('resetBtn');
+    const audioBtn = document.getElementById('audioBtn');
+    const cmpAEl = document.getElementById('cmpA');
+    const swapAEl = document.getElementById('swapA');
+    const cmpBEl = document.getElementById('cmpB');
+    const swapBEl = document.getElementById('swapB');
+    const algoSelectA = document.getElementById('algoSelectA');
+    const algoSelectB = document.getElementById('algoSelectB');
+    const nInput = document.getElementById('nInput');
+    const complexityTableBody = document.getElementById('complexityTableBody');
+
+    // Tab Navigation
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.view-section').forEach(s => s.classList.remove('active'));
+        btn.classList.add('active');
+        document.getElementById(btn.dataset.tab + 'View').classList.add('active');
+      });
+    });
+
+    // 1. Data Generators
+    function generateDataset(size, type) {
+      let arr = [];
+      for (let i = 1; i <= size; i++) arr.push(Math.round((i / size) * 100));
+
+      if (type === 'random') {
+        for (let i = arr.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [arr[i], arr[j]] = [arr[j], arr[i]];
+        }
+      } else if (type === 'reversed') {
+        arr.reverse();
+      } else if (type === 'duplicates') {
+        const unique = [15, 35, 55, 75, 95];
+        arr = arr.map(() => unique[Math.floor(Math.random() * unique.length)]);
+      }
+      return arr;
+    }
+
+    // 2. Algorithm Step Recorders
+    // Step formats:
+    // { type: 'cmp', indices: [i, j] }
+    // { type: 'swap', indices: [i, j], values: [v1, v2] }
+    // { type: 'set', index: i, value: v }
+    // { type: 'pivot', index: i }
+    // { type: 'sorted', index: i }
+
+    function recordSelectionSort(initial) {
+      let a = [...initial];
+      let steps = [];
+      let n = a.length;
+
+      for (let i = 0; i < n - 1; i++) {
+        let minIdx = i;
+        steps.push({ type: 'pivot', index: minIdx });
+
+        for (let j = i + 1; j < n; j++) {
+          steps.push({ type: 'cmp', indices: [minIdx, j] });
+          if (a[j] < a[minIdx]) {
+            minIdx = j;
+            steps.push({ type: 'pivot', index: minIdx });
+          }
+        }
+        if (minIdx !== i) {
+          [a[i], a[minIdx]] = [a[minIdx], a[i]];
+          steps.push({ type: 'swap', indices: [i, minIdx], values: [a[i], a[minIdx]] });
+        }
+        steps.push({ type: 'sorted', index: i });
+      }
+      steps.push({ type: 'sorted', index: n - 1 });
+      return steps;
+    }
+
+    function recordInsertionSort(initial) {
+      let a = [...initial];
+      let steps = [];
+      let n = a.length;
+      steps.push({ type: 'sorted', index: 0 });
+
+      for (let i = 1; i < n; i++) {
+        let key = a[i];
+        let j = i - 1;
+        steps.push({ type: 'pivot', index: i });
+
+        while (j >= 0) {
+          steps.push({ type: 'cmp', indices: [j, j + 1] });
+          if (a[j] > key) {
+            a[j + 1] = a[j];
+            steps.push({ type: 'set', index: j + 1, value: a[j] });
+            j--;
+          } else {
+            break;
+          }
+        }
+        a[j + 1] = key;
+        steps.push({ type: 'set', index: j + 1, value: key });
+      }
+
+      for (let i = 0; i < n; i++) steps.push({ type: 'sorted', index: i });
+      return steps;
+    }
+
+    function recordBubbleSort(initial) {
+      let a = [...initial];
+      let steps = [];
+      let n = a.length;
+
+      for (let i = 0; i < n - 1; i++) {
+        let swapped = false;
+        for (let j = 0; j < n - i - 1; j++) {
+          steps.push({ type: 'cmp', indices: [j, j + 1] });
+          if (a[j] > a[j + 1]) {
+            [a[j], a[j + 1]] = [a[j + 1], a[j]];
+            steps.push({ type: 'swap', indices: [j, j + 1], values: [a[j], a[j + 1]] });
+            swapped = true;
+          }
+        }
+        steps.push({ type: 'sorted', index: n - i - 1 });
+        if (!swapped) break;
+      }
+      for (let i = 0; i < n; i++) steps.push({ type: 'sorted', index: i });
+      return steps;
+    }
+
+    function recordQuickSort(initial) {
+      let a = [...initial];
+      let steps = [];
+
+      function qSort(p, r) {
+        if (p < r) {
+          let pivot = a[r];
+          steps.push({ type: 'pivot', index: r });
+          let i = p - 1;
+
+          for (let j = p; j < r; j++) {
+            steps.push({ type: 'cmp', indices: [j, r] });
+            if (a[j] <= pivot) {
+              i++;
+              [a[i], a[j]] = [a[j], a[i]];
+              steps.push({ type: 'swap', indices: [i, j], values: [a[i], a[j]] });
+            }
+          }
+          [a[i + 1], a[r]] = [a[r], a[i + 1]];
+          steps.push({ type: 'swap', indices: [i + 1, r], values: [a[i + 1], a[r]] });
+          let q = i + 1;
+          steps.push({ type: 'sorted', index: q });
+
+          qSort(p, q - 1);
+          qSort(q + 1, r);
+        } else if (p === r) {
+          steps.push({ type: 'sorted', index: p });
+        }
+      }
+
+      qSort(0, a.length - 1);
+      for (let i = 0; i < a.length; i++) steps.push({ type: 'sorted', index: i });
+      return steps;
+    }
+
+    function recordMergeSort(initial) {
+      let a = [...initial];
+      let steps = [];
+
+      function mSort(p, r) {
+        if (p >= r) return;
+        let q = Math.floor((p + r) / 2);
+        mSort(p, q);
+        mSort(q + 1, r);
+
+        let left = a.slice(p, q + 1);
+        let right = a.slice(q + 1, r + 1);
+        let i = 0, j = 0, k = p;
+
+        while (i < left.length && j < right.length) {
+          steps.push({ type: 'cmp', indices: [p + i, q + 1 + j] });
+          if (left[i] <= right[j]) {
+            a[k] = left[i];
+            steps.push({ type: 'set', index: k, value: left[i] });
+            i++;
+          } else {
+            a[k] = right[j];
+            steps.push({ type: 'set', index: k, value: right[j] });
+            j++;
+          }
+          k++;
+        }
+
+        while (i < left.length) {
+          a[k] = left[i];
+          steps.push({ type: 'set', index: k, value: left[i] });
+          i++; k++;
+        }
+        while (j < right.length) {
+          a[k] = right[j];
+          steps.push({ type: 'set', index: k, value: right[j] });
+          j++; k++;
+        }
+      }
+
+      mSort(0, a.length - 1);
+      for (let i = 0; i < a.length; i++) steps.push({ type: 'sorted', index: i });
+      return steps;
+    }
+
+    function recordHeapSort(initial) {
+      let a = [...initial];
+      let steps = [];
+      let n = a.length;
+
+      function heapify(size, i) {
+        let largest = i;
+        let left = 2 * i + 1;
+        let right = 2 * i + 2;
+
+        if (left < size) {
+          steps.push({ type: 'cmp', indices: [left, largest] });
+          if (a[left] > a[largest]) largest = left;
+        }
+
+        if (right < size) {
+          steps.push({ type: 'cmp', indices: [right, largest] });
+          if (a[right] > a[largest]) largest = right;
+        }
+
+        if (largest !== i) {
+          [a[i], a[largest]] = [a[largest], a[i]];
+          steps.push({ type: 'swap', indices: [i, largest], values: [a[i], a[largest]] });
+          heapify(size, largest);
+        }
+      }
+
+      for (let i = Math.floor(n / 2) - 1; i >= 0; i--) heapify(n, i);
+
+      for (let i = n - 1; i > 0; i--) {
+        [a[0], a[i]] = [a[i], a[0]];
+        steps.push({ type: 'swap', indices: [0, i], values: [a[0], a[i]] });
+        steps.push({ type: 'sorted', index: i });
+        heapify(i, 0);
+      }
+      steps.push({ type: 'sorted', index: 0 });
+      return steps;
+    }
+
+    const algoRecorders = {
+      selectionSort: recordSelectionSort,
+      insertionSort: recordInsertionSort,
+      bubbleSort: recordBubbleSort,
+      quickSort: recordQuickSort,
+      mergeSort: recordMergeSort,
+      heapSort: recordHeapSort
+    };
+
+    // 3. Render Canvas Bars
+    function renderCanvas(container, array) {
+      container.innerHTML = '';
+      array.forEach((val, i) => {
+        const bar = document.createElement('div');
+        bar.className = 'bar';
+        bar.style.height = `${Math.max(4, val)}%`;
+        bar.dataset.index = i;
+        container.appendChild(bar);
+      });
+    }
+
+    // 4. Reset & Setup
+    function setupVisualizers() {
+      if (isRunning) stopSort();
+
+      const size = parseInt(sizeRange.value, 10);
+      sizeVal.textContent = size;
+      const type = datasetSelect.value;
+      baseData = generateDataset(size, type);
+
+      laneAState = {
+        array: [...baseData],
+        steps: algoRecorders[algoSelectA.value](baseData),
+        cmp: 0,
+        swap: 0,
+        done: false
+      };
+
+      laneBState = {
+        array: [...baseData],
+        steps: algoRecorders[algoSelectB.value](baseData),
+        cmp: 0,
+        swap: 0,
+        done: false
+      };
+
+      renderCanvas(canvasA, laneAState.array);
+      renderCanvas(canvasB, laneBState.array);
+      updateMetrics();
+
+      playBtn.textContent = '▶ Run Sort';
+      playBtn.classList.remove('btn-danger');
+      playBtn.classList.add('btn-primary');
+    }
+
+    function updateMetrics() {
+      cmpAEl.textContent = laneAState.cmp;
+      swapAEl.textContent = laneAState.swap;
+      cmpBEl.textContent = laneBState.cmp;
+      swapBEl.textContent = laneBState.swap;
+    }
+
+    // 5. Animation Runner
+    function runNextStep(lane, container, isLaneA) {
+      if (lane.steps.length === 0) {
+        lane.done = true;
+        return;
+      }
+
+      // Clear previous active highlights
+      const bars = container.children;
+      for (let b of bars) {
+        b.classList.remove('comparing', 'swapping', 'pivot');
+      }
+
+      const step = lane.steps.shift();
+
+      if (step.type === 'cmp') {
+        lane.cmp++;
+        step.indices.forEach(idx => {
+          if (bars[idx]) bars[idx].classList.add('comparing');
+        });
+        if (bars[step.indices[0]]) playNote(lane.array[step.indices[0]]);
+      } else if (step.type === 'swap') {
+        lane.swap++;
+        const [i, j] = step.indices;
+        const [v1, v2] = step.values;
+        lane.array[i] = v1;
+        lane.array[j] = v2;
+        if (bars[i]) {
+          bars[i].style.height = `${Math.max(4, v1)}%`;
+          bars[i].classList.add('swapping');
+        }
+        if (bars[j]) {
+          bars[j].style.height = `${Math.max(4, v2)}%`;
+          bars[j].classList.add('swapping');
+        }
+        playNote(v1);
+      } else if (step.type === 'set') {
+        lane.swap++;
+        lane.array[step.index] = step.value;
+        if (bars[step.index]) {
+          bars[step.index].style.height = `${Math.max(4, step.value)}%`;
+          bars[step.index].classList.add('swapping');
+        }
+        playNote(step.value);
+      } else if (step.type === 'pivot') {
+        if (bars[step.index]) bars[step.index].classList.add('pivot');
+      } else if (step.type === 'sorted') {
+        if (bars[step.index]) bars[step.index].classList.add('sorted');
+      }
+    }
+
+    function animationLoop() {
+      if (!isRunning) return;
+
+      const isDual = modeSelect.value === 'dual';
+
+      if (!laneAState.done) runNextStep(laneAState, canvasA, true);
+      if (isDual && !laneBState.done) runNextStep(laneBState, canvasB, false);
+
+      updateMetrics();
+
+      if (laneAState.done && (!isDual || laneBState.done)) {
+        stopSort();
+        playBtn.textContent = '✓ Finished';
+        return;
+      }
+
+      // Speed mapping: 1 (slow, 120ms) to 100 (fast, 2ms)
+      const speed = parseInt(speedRange.value, 10);
+      const delay = Math.round(120 - (speed / 100) * 118);
+      animationTimer = setTimeout(animationLoop, delay);
+    }
+
+    function startSort() {
+      isRunning = true;
+      playBtn.textContent = '⏸ Pause';
+      playBtn.classList.remove('btn-primary');
+      playBtn.classList.add('btn-danger');
+      animationLoop();
+    }
+
+    function stopSort() {
+      isRunning = false;
+      if (animationTimer) clearTimeout(animationTimer);
+      playBtn.textContent = '▶ Resume';
+      playBtn.classList.remove('btn-danger');
+      playBtn.classList.add('btn-primary');
+    }
+
+    playBtn.addEventListener('click', () => {
+      if (isRunning) stopSort();
+      else startSort();
+    });
+
+    resetBtn.addEventListener('click', setupVisualizers);
+    datasetSelect.addEventListener('change', setupVisualizers);
+    sizeRange.addEventListener('input', setupVisualizers);
+    algoSelectA.addEventListener('change', setupVisualizers);
+    algoSelectB.addEventListener('change', setupVisualizers);
+
+    modeSelect.addEventListener('change', () => {
+      if (modeSelect.value === 'solo') {
+        arenaGrid.classList.remove('dual-mode');
+        cardB.style.display = 'none';
+      } else {
+        arenaGrid.classList.add('dual-mode');
+        cardB.style.display = 'flex';
+      }
+      setupVisualizers();
+    });
+
+    audioBtn.addEventListener('click', () => {
+      soundEnabled = !soundEnabled;
+      audioBtn.textContent = soundEnabled ? '🔊 Sound: ON' : '🔇 Sound: OFF';
+      audioBtn.classList.toggle('active', soundEnabled);
+      if (soundEnabled) playNote(50);
+    });
+
+    // 6. Complexity Calculator Engine
+    const algoMetadata = [
+      {
+        name: 'Insertion Sort',
+        best: 'O(n)',
+        avg: 'O(n²)',
+        worst: 'O(n²)',
+        calcWorst: (n) => (n * (n - 1)) / 2,
+        space: 'O(1)',
+        stable: 'Yes'
+      },
+      {
+        name: 'Selection Sort',
+        best: 'O(n²)',
+        avg: 'O(n²)',
+        worst: 'O(n²)',
+        calcWorst: (n) => (n * (n - 1)) / 2,
+        space: 'O(1)',
+        stable: 'No'
+      },
+      {
+        name: 'Bubble Sort',
+        best: 'O(n)',
+        avg: 'O(n²)',
+        worst: 'O(n²)',
+        calcWorst: (n) => (n * (n - 1)) / 2,
+        space: 'O(1)',
+        stable: 'Yes'
+      },
+      {
+        name: 'Merge Sort',
+        best: 'O(n log n)',
+        avg: 'O(n log n)',
+        worst: 'O(n log n)',
+        calcWorst: (n) => Math.round(n * Math.log2(n)),
+        space: 'O(n)',
+        stable: 'Yes'
+      },
+      {
+        name: 'Heap Sort',
+        best: 'O(n log n)',
+        avg: 'O(n log n)',
+        worst: 'O(n log n)',
+        calcWorst: (n) => Math.round(n * Math.log2(n)),
+        space: 'O(1)',
+        stable: 'No'
+      },
+      {
+        name: 'Quick Sort (Lomuto)',
+        best: 'O(n log n)',
+        avg: 'O(n log n)',
+        worst: 'O(n²)',
+        calcWorst: (n) => (n * (n - 1)) / 2,
+        space: 'O(log n)',
+        stable: 'No'
+      },
+      {
+        name: 'Radix Sort (LSD, d=4, b=10)',
+        best: 'O(d · n)',
+        avg: 'O(d · n)',
+        worst: 'O(d · n)',
+        calcWorst: (n) => Math.round(4 * n),
+        space: 'O(n + k)',
+        stable: 'Yes'
+      }
+    ];
+
+    function updateComplexityTable() {
+      const n = Math.max(2, parseInt(nInput.value, 10) || 1000);
+      document.querySelectorAll('.current-n').forEach(el => el.textContent = n.toLocaleString());
+
+      complexityTableBody.innerHTML = '';
+      algoMetadata.forEach(algo => {
+        const tr = document.createElement('tr');
+        const worstOps = algo.calcWorst(n);
+
+        tr.innerHTML = `
+          <td><strong>${algo.name}</strong></td>
+          <td><span class="badge-complexity ${algo.best === 'O(n)' || algo.best.includes('d') ? 'comp-best' : 'comp-avg'}">${algo.best}</span></td>
+          <td><span class="badge-complexity comp-avg">${algo.avg}</span></td>
+          <td><span class="badge-complexity ${algo.worst.includes('²') ? 'comp-bad' : 'comp-avg'}">${algo.worst}</span></td>
+          <td style="color: ${worstOps > 1000000 ? 'var(--danger)' : 'var(--primary)'}; font-weight: 700;">
+            ≈ ${worstOps.toLocaleString()} ops
+          </td>
+          <td><span style="color: var(--text-muted);">${algo.space}</span></td>
+          <td><span style="color: ${algo.stable === 'Yes' ? 'var(--success)' : 'var(--text-muted)'}; font-weight: 600;">${algo.stable}</span></td>
+        `;
+        complexityTableBody.appendChild(tr);
+      });
+    }
+
+    nInput.addEventListener('input', updateComplexityTable);
+    document.getElementById('btnPreset10k').addEventListener('click', () => { nInput.value = 10000; updateComplexityTable(); });
+    document.getElementById('btnPreset100k').addEventListener('click', () => { nInput.value = 100000; updateComplexityTable(); });
+
+    // Initial Load
+    setupVisualizers();
+    updateComplexityTable();
+  </script>
+</body>
+</html>
