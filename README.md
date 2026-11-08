@@ -15,10 +15,10 @@ An interactive visualizer, comparative benchmark suite, and theoretical complexi
 * **Dual Arena (Side-by-Side Race):** Compare any two sorting algorithms running concurrently on the exact same dataset to observe trade-offs in real time.
 * **Solo Mode:** Deep-dive into step-by-step executions with live comparison and swap highlights.
 * **Input Case Presets:**
-  * 🎲 **Random:** Average-case behavior.
-  * 📉 **Reversed:** Worst-case trigger for quadratic algorithms ($O(n^2)$).
-  * 📈 **Already Sorted:** Best-case demonstration (illustrates Insertion Sort's linear $O(n)$ performance).
-  * 🔁 **Few Unique:** Demonstrates stability and handling of duplicates.
+  * **Random:** Average-case behavior.
+  * **Reversed:** Worst-case trigger for quadratic algorithms ($O(n^2)$).
+  * **Already Sorted:** Best-case demonstration (illustrates Insertion Sort's linear $O(n)$ performance).
+  * **Few Unique:** Demonstrates stability and handling of duplicates.
 * **Dynamic Complexity Calculator:** Input any value of $N$ (e.g., $10$, $1\,000$, $100\,000$, $1\,000\,000$) to calculate exact theoretical operations, growth rates, and space complexity in real time.
 * **Synthesized Web Audio SFX:** Audio feedback mapped to element values (pitch scales with bar height) using the Web Audio API with zero external dependencies.
 
@@ -48,18 +48,18 @@ An interactive visualizer, comparative benchmark suite, and theoretical complexi
 sorting-algorithms-visualizer/
 ├── cpp/
 │   ├── include/
-│   │   └── Sorter.hpp             # Clean, reusable C++17 sorting engine
+│   │   └── Sorter.hpp            # Clean, reusable C++17 sorting engine
 │   ├── src/
-│   │   └── main.cpp               # Microsecond-accurate benchmark driver
-│   └── Makefile                   # Build automation for C++ binaries
+│   │   └── main.cpp              # Microsecond-accurate benchmark driver
+│   └── Makefile                  # Build automation for C++ binaries
 ├── docs/
-│   ├── Complexity_Analysis.md     # Detailed Big-O proofs and trade-offs
-│   └── Algorithms_Guide.md        # Technical reference and pseudocode
+│   ├── Complexity_Analysis.md    # Detailed Big-O proofs and trade-offs
+│   └── Algorithms_Guide.md       # Technical reference and pseudocode
 ├── web/
-│   └── index.html                 # Interactive web visualizer & calculator
+│   └── index.html                # Interactive web visualizer & calculator
 ├── .gitignore
-├── LICENSE                        # MIT License
-└── README.md                      # Project documentation
+├── LICENSE                       # MIT License
+└── README.md                     # Project documentation
 ```
 
 ---
