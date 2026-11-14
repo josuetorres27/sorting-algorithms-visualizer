@@ -1,33 +1,35 @@
 # Sorting Algorithms & Complexity Visualizer
 
-[![C++17](https://img.shields.io/badge/C%2B%2B-17-blue.svg?logo=c%2B%2B)](https://en.wikipedia.org/wiki/C%2B%2B17)
-[![Web Visualizer](https://img.shields.io/badge/Web-HTML5%20%2F%20Vanilla%20JS-orange.svg)](web/index.html)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![Build: Make](https://img.shields.io/badge/Build-Makefile-brightgreen.svg)](cpp/Makefile)
+[![C++17](https://img.shields.io/badge/C%2B%2B-17-blue?style=flat-square&logo=c%2B%2B)](https://en.wikipedia.org/wiki/C%2B%2B17)
+[![Web Visualizer](https://img.shields.io/badge/Web-HTML5%20%2F%20Vanilla%20JS-orange?style=flat-square)](web/index.html)
+[![Build: Make](https://img.shields.io/badge/Build-Makefile-brightgreen?style=flat-square)](cpp/Makefile)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow?style=flat-square)](LICENSE)
 
-Fundamental sorting algorithms in two independent parts: a **C++17 command-line benchmark** that measures time, comparisons, and element moves, and a **zero-dependency HTML/JavaScript visualizer** with side-by-side races, sound, and a Big-O operation calculator. The web page does not use the C++ code; each part has its own implementation.
+Fundamental sorting algorithms in two independent parts: a C++17 command-line benchmark that measures time, comparisons, and element moves, and a zero-dependency HTML/JavaScript visualizer with side-by-side races, sound, and a Big-O operation calculator. The web page does not use the C++ code; each part has its own implementation.
 
 ---
 
 ## Features
 
-### 1. Interactive Web Visualizer (`web/index.html`)
-* **Dual Race (Side-by-Side):** Run any two algorithms at the same time on the same dataset, with live comparison and swap counters for each lane.
-* **Solo Mode:** Hides the second lane and runs a single algorithm.
-* **Controls:** Run / Pause / Resume, Reset, an array size slider (**N = 15 to 80**), and an animation speed slider.
-* **Color legend:** unsorted, comparing, swap / overwrite, pivot / minimum, and in final position.
-* **Input Case Presets:**
-  * **Random:** Average-case behavior.
-  * **Reversed:** Worst case for the quadratic algorithms ($O(n^2)$).
-  * **Sorted:** Best case for Insertion Sort and Bubble Sort ($O(n)$); worst case for Lomuto Quick Sort.
-  * **Few Unique:** Every element takes one of only 5 distinct values, to show how each algorithm handles many duplicates.
-* **Complexity Calculator tab:** Enter any $N$ (presets for 10k and 100k) to get an **approximate worst-case operation count** for each algorithm. The best, average, and worst-case Big-O labels, space, and stability columns are fixed reference values.
-* **Synthesized Web Audio SFX:** Optional sound in which pitch follows bar height, generated with the Web Audio API and no external dependencies.
+### Interactive Web Visualizer (`web/index.html`)
 
-### 2. C++17 Benchmark (`cpp/`)
-* Header-only `Sorter` class (`cpp/include/Sorter.hpp`) with static sorting functions over `int` arrays. Each function returns a `SortMetrics` record (comparisons, swaps/moves, elapsed microseconds).
-* CLI driver (`cpp/src/main.cpp`) that runs every algorithm on three inputs: **random** (fixed seed 42 for reproducibility), **already sorted**, and **reversed**, with **N = 5000**.
-* Each algorithm is timed in a **single run** using `std::chrono::high_resolution_clock`. There are no repetitions or warm-up, so treat the times as indicative; the comparison and move counts are exact for the given input.
+- **Dual Race (Side-by-Side):** Run any two algorithms at the same time on the same dataset, with live comparison and swap counters for each lane.
+- **Solo Mode:** Hides the second lane and runs a single algorithm.
+- **Controls:** Run / Pause / Resume, Reset, an array size slider (N = 15 to 80), and an animation speed slider.
+- **Color Legend:** Unsorted, comparing, swap / overwrite, pivot / minimum, and in final position.
+- **Input Case Presets:**
+  - **Random:** Average-case behavior.
+  - **Reversed:** Worst case for the quadratic algorithms ($O(n^2)$).
+  - **Sorted:** Best case for Insertion Sort and Bubble Sort ($O(n)$); worst case for Lomuto Quick Sort.
+  - **Few Unique:** Every element takes one of only 5 distinct values, to show how each algorithm handles many duplicates.
+- **Complexity Calculator Tab:** Enter any $N$ (presets for 10k and 100k) to get an approximate worst-case operation count for each algorithm. The best, average, and worst-case Big-O labels, space, and stability columns are fixed reference values.
+- **Synthesized Web Audio SFX:** Optional sound in which pitch follows bar height, generated with the Web Audio API and no external dependencies.
+
+### C++17 Benchmark (`cpp/`)
+
+- **Sorter Class:** Header-only `Sorter` class (`cpp/include/Sorter.hpp`) with static sorting functions over `int` arrays. Each function returns a `SortMetrics` record (comparisons, swaps/moves, elapsed microseconds).
+- **CLI Driver:** `cpp/src/main.cpp` runs every algorithm on three inputs: random (fixed seed 42 for reproducibility), already sorted, and reversed, with N = 5,000.
+- **Timing:** Each algorithm is timed in a single run using `std::chrono::high_resolution_clock`. There are no repetitions or warm-up, so the times are indicative; the comparison and move counts are exact for the given input.
 
 ---
 
@@ -65,47 +67,48 @@ For Radix Sort, $d$ is the number of digits in the largest key and $k = 10$ (bas
 
 ---
 
-## Sample Benchmark Output
+## Benchmark Results
 
-Sample run, N=5000, Ubuntu 22.04/WSL, g++ 11.4; times vary by machine. Comparison and move counts are deterministic for these inputs.
+Sample run, N = 5,000, Ubuntu 22.04/WSL, g++ 11.4; times vary by machine. Comparison and move counts are deterministic for these inputs.
 
-**Random array (seed 42)**
-
-| Algorithm | Time (µs) | Comparisons | Swaps/Moves |
-| :--- | ---: | ---: | ---: |
-| Selection Sort | 15,200.63 | 12,497,500 | 4,994 |
-| Insertion Sort | 7,614.69 | 6,245,818 | 6,240,824 |
-| Merge Sort | 1,348.04 | 55,290 | 61,808 |
-| Heap Sort | 919.72 | 107,691 | 57,094 |
-| Quick Sort | 531.24 | 71,750 | 42,343 |
-| Radix Sort | 477.92 | 4,999 | 20,000 |
-
-**Already sorted array**
+### Random Array (Seed 42)
 
 | Algorithm | Time (µs) | Comparisons | Swaps/Moves |
-| :--- | ---: | ---: | ---: |
-| Selection Sort | 16,930.29 | 12,497,500 | 0 |
-| Insertion Sort | 22.20 | 4,999 | 0 |
-| Merge Sort | 937.40 | 32,004 | 61,808 |
-| Heap Sort | 835.62 | 112,126 | 60,932 |
-| Quick Sort | 35,663.08 | 12,497,500 | 12,502,499 |
-| Radix Sort | 388.24 | 4,999 | 20,000 |
+| :--- | :---: | :---: | :---: |
+| **Selection Sort** | 15,200.63 | 12,497,500 | 4,994 |
+| **Insertion Sort** | 7,614.69 | 6,245,818 | 6,240,824 |
+| **Merge Sort** | 1,348.04 | 55,290 | 61,808 |
+| **Heap Sort** | 919.72 | 107,691 | 57,094 |
+| **Quick Sort** | 531.24 | 71,750 | 42,343 |
+| **Radix Sort** | 477.92 | 4,999 | 20,000 |
 
-**Reversed array**
+### Already Sorted Array
 
 | Algorithm | Time (µs) | Comparisons | Swaps/Moves |
-| :--- | ---: | ---: | ---: |
-| Selection Sort | 16,270.45 | 12,497,500 | 2,500 |
-| Insertion Sort | 20,075.69 | 12,497,500 | 12,497,500 |
-| Merge Sort | 704.81 | 29,804 | 61,808 |
-| Heap Sort | 801.48 | 103,227 | 53,436 |
-| Quick Sort | 26,702.30 | 12,497,500 | 6,252,499 |
-| Radix Sort | 413.51 | 4,999 | 20,000 |
+| :--- | :---: | :---: | :---: |
+| **Selection Sort** | 16,930.29 | 12,497,500 | 0 |
+| **Insertion Sort** | 22.20 | 4,999 | 0 |
+| **Merge Sort** | 937.40 | 32,004 | 61,808 |
+| **Heap Sort** | 835.62 | 112,126 | 60,932 |
+| **Quick Sort** | 35,663.08 | 12,497,500 | 12,502,499 |
+| **Radix Sort** | 388.24 | 4,999 | 20,000 |
 
-Some notes on how to read these numbers:
-* Radix Sort does not compare elements while sorting. Its "comparisons" are the $n - 1$ checks used to find the largest value.
-* Merge Sort's "moves" are writes back into the array during merging.
-* On sorted input, Quick Sort makes $n(n-1)/2 = 12{,}497{,}500$ comparisons, which is the Lomuto worst case.
+### Reversed Array
+
+| Algorithm | Time (µs) | Comparisons | Swaps/Moves |
+| :--- | :---: | :---: | :---: |
+| **Selection Sort** | 16,270.45 | 12,497,500 | 2,500 |
+| **Insertion Sort** | 20,075.69 | 12,497,500 | 12,497,500 |
+| **Merge Sort** | 704.81 | 29,804 | 61,808 |
+| **Heap Sort** | 801.48 | 103,227 | 53,436 |
+| **Quick Sort** | 26,702.30 | 12,497,500 | 6,252,499 |
+| **Radix Sort** | 413.51 | 4,999 | 20,000 |
+
+### Reading the Results
+
+- Radix Sort does not compare elements while sorting. Its "comparisons" are the $n - 1$ checks used to find the largest value.
+- Merge Sort's "moves" are writes back into the array during merging.
+- On sorted input, Quick Sort makes $n(n-1)/2 = 12{,}497{,}500$ comparisons, which is the Lomuto worst case.
 
 ---
 
@@ -129,16 +132,31 @@ sorting-algorithms-visualizer/
 └── README.md                     # Project documentation
 ```
 
-### Documentation
-* [Complexity_Analysis.md](docs/Complexity_Analysis.md): the complexity matrix plus best- and worst-case reasoning and recurrence sketches for Insertion, Selection, Merge, Quick, and Heap Sort.
-* [Algorithms_Guide.md](docs/Algorithms_Guide.md): a short description of each C++ algorithm, with pseudocode for all of them except Radix Sort, which is described in prose.
-
 ---
 
-## Quick Start
+## Getting Started
 
-### 1. Running the Interactive Web Visualizer
-`web/index.html` is a single self-contained file with no build step or dependencies. Open it directly in any modern browser:
+### Prerequisites
+
+- **Web Visualizer:** None. `web/index.html` is a single self-contained file with no build step or dependencies.
+- **C++ Benchmark:** `g++` with C++17 support, and GNU `make` and a POSIX shell, because the Makefile uses `mkdir -p` and `rm -rf`. On Windows, use WSL or MinGW/MSYS2.
+
+### Build
+
+```bash
+cd cpp
+
+# Compile (g++ -std=c++17 -Wall -Wextra -O3) into bin/benchmark
+make
+
+# Remove build output
+make clean
+```
+
+### Run
+
+Open the web visualizer directly in any modern browser:
+
 ```bash
 # Windows
 start web/index.html
@@ -150,32 +168,26 @@ open web/index.html
 xdg-open web/index.html
 ```
 
-### 2. Building & Running the C++ Benchmark
-
-**Prerequisites:**
-* `g++` with C++17 support.
-* GNU `make` and a POSIX shell, because the Makefile uses `mkdir -p` and `rm -rf`.
-* On Windows, use WSL or MinGW/MSYS2.
+Build the C++ benchmark if needed, then run it:
 
 ```bash
 cd cpp
-
-# Compile (g++ -std=c++17 -Wall -Wextra -O3) into bin/benchmark
-make
-
-# Build if needed, then run the benchmark
 make run
-
-# Remove build output
-make clean
 ```
+
+---
+
+## Documentation
+
+- [Complexity_Analysis.md](docs/Complexity_Analysis.md): the complexity matrix plus best- and worst-case reasoning and recurrence sketches for Insertion, Selection, Merge, Quick, and Heap Sort.
+- [Algorithms_Guide.md](docs/Algorithms_Guide.md): a short description of each C++ algorithm, with pseudocode for all of them except Radix Sort, which is described in prose.
 
 ---
 
 ## License
 
-This project is licensed under the **MIT License**. See the [LICENSE](LICENSE) file for details.
+This project is licensed under the [MIT License](LICENSE).
 
 ---
 
-Created by **Josué Torres Sibaja** ([portfolio](https://josuetorressibaja.com/) · [LinkedIn](https://www.linkedin.com/in/josue-torres-sibaja/))
+Created by **Josue Torres Sibaja** · [Portfolio](https://josuetorressibaja.com/) · [LinkedIn](https://www.linkedin.com/in/josue-torres-sibaja/) · [GitHub](https://github.com/josuetorres27)
