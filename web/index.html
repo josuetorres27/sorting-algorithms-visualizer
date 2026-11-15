@@ -465,10 +465,10 @@
       <!-- Distribution / Dataset Case -->
       <span class="control-label">Array:</span>
       <select id="datasetSelect" class="select-ctrl" title="Select Input Distribution">
-        <option value="random">🎲 Random (Average Case)</option>
-        <option value="reversed">📉 Reversed (Worst Case)</option>
-        <option value="sorted">📈 Sorted (Best Case)</option>
-        <option value="duplicates">🔁 Few Unique (Duplicates)</option>
+        <option value="random">Random (Average Case)</option>
+        <option value="reversed">Reversed (Worst Case)</option>
+        <option value="sorted">Sorted (Best Case)</option>
+        <option value="duplicates">Few Unique (Duplicates)</option>
       </select>
 
       <!-- Array Size -->
@@ -488,12 +488,12 @@
     <div class="control-group">
       <!-- Audio Toggle -->
       <button id="audioBtn" class="btn" title="Toggle Sound Feedback">
-        🔊 Sound: OFF
+        Sound: OFF
       </button>
 
       <!-- Play / Pause / Reset -->
       <button id="resetBtn" class="btn">↺ Reset</button>
-      <button id="playBtn" class="btn btn-primary">▶ Run Sort</button>
+      <button id="playBtn" class="btn btn-primary">Run Sort</button>
     </div>
   </div>
 
@@ -932,7 +932,7 @@
       renderCanvas(canvasB, laneBState.array);
       updateMetrics();
 
-      playBtn.textContent = '▶ Run Sort';
+      playBtn.textContent = 'Run Sort';
       playBtn.classList.remove('btn-danger');
       playBtn.classList.add('btn-primary');
     }
@@ -1019,7 +1019,7 @@
 
     function startSort() {
       isRunning = true;
-      playBtn.textContent = '⏸ Pause';
+      playBtn.textContent = 'Pause';
       playBtn.classList.remove('btn-primary');
       playBtn.classList.add('btn-danger');
       animationLoop();
@@ -1028,7 +1028,7 @@
     function stopSort() {
       isRunning = false;
       if (animationTimer) clearTimeout(animationTimer);
-      playBtn.textContent = '▶ Resume';
+      playBtn.textContent = 'Resume';
       playBtn.classList.remove('btn-danger');
       playBtn.classList.add('btn-primary');
     }
@@ -1057,7 +1057,7 @@
 
     audioBtn.addEventListener('click', () => {
       soundEnabled = !soundEnabled;
-      audioBtn.textContent = soundEnabled ? '🔊 Sound: ON' : '🔇 Sound: OFF';
+      audioBtn.textContent = soundEnabled ? 'Sound: ON' : 'Sound: OFF';
       audioBtn.classList.toggle('active', soundEnabled);
       if (soundEnabled) playNote(50);
     });
