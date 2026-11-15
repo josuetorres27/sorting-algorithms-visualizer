@@ -118,18 +118,18 @@ Sample run, N = 5,000, Ubuntu 22.04/WSL, g++ 11.4; times vary by machine. Compar
 sorting-algorithms-visualizer/
 ├── cpp/
 │   ├── include/
-│   │   └── Sorter.hpp            # Header-only sorting implementations + SortMetrics
+│   │   └── Sorter.hpp         # Header-only sorting implementations + SortMetrics
 │   ├── src/
-│   │   └── main.cpp              # CLI benchmark driver (3 inputs, N = 5000)
-│   └── Makefile                  # g++ -std=c++17 -Wall -Wextra -O3
+│   │   └── main.cpp           # CLI benchmark driver (3 inputs, N = 5000)
+│   └── Makefile               # g++ -std=c++17 -Wall -Wextra -O3
 ├── docs/
-│   ├── Complexity_Analysis.md    # Complexity matrix and recurrence sketches
-│   └── Algorithms_Guide.md       # Short reference with pseudocode
+│   ├── Complexity_Analysis.md # Complexity matrix and recurrence sketches
+│   └── Algorithms_Guide.md    # Short reference with pseudocode
 ├── web/
-│   └── index.html                # Self-contained visualizer & complexity calculator
+│   └── index.html             # Self-contained visualizer & complexity calculator
 ├── .gitignore
-├── LICENSE                       # MIT License
-└── README.md                     # Project documentation
+├── LICENSE                    # MIT License
+└── README.md                  # Project documentation
 ```
 
 ---
